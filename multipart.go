@@ -7,7 +7,7 @@
 Package mRelated extends the multipart package.
 */
 
-package mRelated
+package mrelated
 
 import (
 	"bytes"
