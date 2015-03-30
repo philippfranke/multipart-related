@@ -2,11 +2,11 @@
 
 multipart-related implements MIME multipart/related in go, [RFC 2387](http://tools.ietf.org/html/rfc2387)
 
-**Documentation:** [![GoDoc](https://godoc.org/github.com/philippfranke/multipart-related?status.svg)](https://godoc.org/github.com/philippfranke/multipart-related)
+**Documentation:** [![GoDoc](https://godoc.org/github.com/philippfranke/multipart-related/related?status.svg)](https://godoc.org/github.com/philippfranke/multipart-related/related)
 
 **Build Status:** [![Build Status](https://travis-ci.org/philippfranke/multipart-related.svg?branch=master)](https://travis-ci.org/philippfranke/multipart-related)
 
-multipart-related requires Go version 1.1 or greater.
+multipart-related requires Go version 1.2 or greater.
 
 ## What is multipart-related
 The Package related implements MIME multipart/related parsing, as defined in RFC 2387.
