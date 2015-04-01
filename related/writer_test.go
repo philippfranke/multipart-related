@@ -260,3 +260,26 @@ func TestFormDataContentType(t *testing.T) {
 
 	w.Close()
 }
+
+func TestFormatContentId(t *testing.T) {
+	tests := []struct {
+		id string
+		w  string
+		ok bool
+	}{
+		{"a@b.c", "<a@b.c>", true},
+		{"<aa>", "", false},
+		{"", "", false},
+	}
+
+	for i, tt := range tests {
+		got, err := formatContentId(tt.id)
+		if err == nil != tt.ok {
+			t.Errorf("%d. start %q = %v (%v), want %v", i, tt.id, got, err, tt.ok)
+		} else if tt.ok {
+			if got != tt.w {
+				t.Errorf("start = %q; want %q", got, tt.w)
+			}
+		}
+	}
+}
