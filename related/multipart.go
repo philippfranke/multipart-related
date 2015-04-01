@@ -132,8 +132,7 @@ func (r *Reader) ReadObject() (*Object, error) {
 		}
 		var b bytes.Buffer
 
-		_, err = io.Copy(&b, p)
-		if err != nil {
+		if _, err := io.Copy(&b, p); err != nil {
 			return nil, err
 		}
 
