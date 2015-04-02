@@ -25,7 +25,7 @@ Content-ID: <a@b.c>
 Life?
 --example-1
 Content-Type: b/c
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: Base64
 Content-ID: <b@c.d>
 
 RG9uJ3QgdGFsayB0byBtZSBhYm91dCBsaWZlIQ==

@@ -13,6 +13,7 @@ import (
 	"mime/multipart"
 	"net/mail"
 	"net/textproto"
+	"strings"
 )
 
 var (
@@ -101,7 +102,7 @@ func (r *Reader) NextPart() (*Part, error) {
 	}
 	p.r = wrap
 
-	switch p.Header.Get("Content-Transfer-Encoding") {
+	switch strings.ToLower(p.Header.Get("Content-Transfer-Encoding")) {
 	case "base64":
 		p.Header.Del("Content-Transfer-Encoding")
 		p.r = base64.NewDecoder(base64.StdEncoding, p.r)
