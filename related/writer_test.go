@@ -7,6 +7,7 @@ package related
 
 import (
 	"bytes"
+	"io/ioutil"
 	"mime"
 	"net/textproto"
 	"reflect"
@@ -14,16 +15,24 @@ import (
 )
 
 func TestWriter(t *testing.T) {
-	fileContents := []byte(`Life? Don't talk to me about life!`)
+	fileContents1 := []byte(`Life? Don't talk to me about life!`)
+	fileContents2 := []byte(`Marvin`)
 
 	var b bytes.Buffer
 	w := NewWriter(&b)
 	{
-		part, err := w.CreateRoot("", "", nil)
+		part, err := w.CreateRoot("", "a/b", nil)
 		if err != nil {
 			t.Fatalf("CreateRoot: %v", err)
 		}
-		part.Write(fileContents)
+		part.Write(fileContents1)
+
+		nextPart, err := w.CreatePart("", nil)
+		if err != nil {
+			t.Fatalf("CreatePart 2: %v", err)
+		}
+
+		nextPart.Write(fileContents2)
 
 		if err := w.Close(); err != nil {
 			t.Fatalf("Close: %v", err)
@@ -35,8 +44,41 @@ func TestWriter(t *testing.T) {
 		}
 	}
 
-	// NewReader(&b, w.Boundary())
-	// TODO Check output
+	r := NewReader(&b, map[string]string{
+		"boundary": w.Boundary(),
+	})
+	part, err := r.NextPart()
+	if err != nil {
+		t.Fatalf("part root: %v", err)
+	}
+	if g, w := part.Header.Get("Content-Type"), "a/b"; g != w {
+		t.Errorf("part root: got content-type: %s, want %s", g, w)
+	}
+	slurp, err := ioutil.ReadAll(part)
+	if err != nil {
+		t.Fatalf("part root: ReadAll: %v", err)
+	}
+	if g, w := string(slurp), string(fileContents1); w != g {
+		t.Errorf("part root: got contents %q, want %q", g, w)
+	}
+	part, err = r.NextPart()
+	if err != nil {
+		t.Fatalf("part 2: %v", err)
+	}
+	if g, w := part.Header.Get("Content-Type"), "text/plain; charset=utf-8"; g != w {
+		t.Errorf("part 2: got content-type: %s, want %s", g, w)
+	}
+	slurp, err = ioutil.ReadAll(part)
+	if err != nil {
+		t.Fatalf("part 2: ReadAll: %v", err)
+	}
+	if g, w := string(slurp), string(fileContents2); w != g {
+		t.Errorf("part 2: got contents %q, want %q", g, w)
+	}
+	part, err = r.NextPart()
+	if part != nil || err == nil {
+		t.Fatalf("expected end of parts; got %v, %v", part, err)
+	}
 }
 
 func TestCreateRootFail(t *testing.T) {
