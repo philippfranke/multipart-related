@@ -5,6 +5,11 @@ go:
  - 1.4
  - 1.5
  - tip
-install: go get -v ./related
-script: go test -v ./related
+install:
+ - go get golang.org/x/tools/cmd/cover
+ - go get github.com/mattn/goveralls
+ - go get -v ./related
+script:
+ - go test -v ./related -covermode=count -coverprofile=coverage.out
+ - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
 
