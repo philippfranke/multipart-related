@@ -7,7 +7,7 @@ package related
 
 import (
 	"errors"
-	"fmt"
+	//"fmt"
 	"io"
 	"mime"
 	"mime/multipart"
@@ -185,7 +185,6 @@ func (w *Writer) CreatePart(
 	header textproto.MIMEHeader,
 ) (io.Writer, error) {
 
-	var mediaType = DefaultMediaType
 
 	if header == nil {
 		header = make(textproto.MIMEHeader)
