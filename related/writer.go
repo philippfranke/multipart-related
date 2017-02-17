@@ -7,11 +7,11 @@ package related
 
 import (
 	"errors"
-	"fmt"
+	//"fmt"
 	"io"
 	"mime"
 	"mime/multipart"
-	"net/mail"
+	//"net/mail"
 	"net/textproto"
 	"strings"
 )
@@ -89,11 +89,12 @@ func (w *Writer) SetStart(contentId string) error {
 // formatContentId parses given id and formats it as specified by
 // RFC 5322
 func formatContentId(contentId string) (string, error) {
-	addr, err := mail.ParseAddress(contentId)
+	/*addr, err := mail.ParseAddress(contentId)
 	if err != nil {
 		return "", err
 	}
-	return fmt.Sprintf("<%s>", addr.Address), nil
+	*/
+	return contentId, nil
 }
 
 // SetType changes MIME mediaType of the compound object
@@ -180,10 +181,10 @@ func (w *Writer) CreateRoot(
 // CreatePart is a wrapper around mulipart's Writer.CreatePart
 func (w *Writer) CreatePart(
 	contentId string,
+	mediaType string,
 	header textproto.MIMEHeader,
 ) (io.Writer, error) {
 
-	var mediaType = DefaultMediaType
 
 	if header == nil {
 		header = make(textproto.MIMEHeader)
@@ -191,6 +192,14 @@ func (w *Writer) CreatePart(
 	} else if header.Get("Content-Type") != "" {
 		mediaType = header.Get("Content-Type")
 	}
+	if mediaType == "" {
+		mediaType = DefaultMediaType
+	}
+
+	if err := w.SetType(mediaType); err != nil {
+		return nil, err
+	}
+	header.Set("Content-Type", w.mediaType)
 
 	if contentId != "" {
 		cid, err := formatContentId(contentId)
@@ -202,7 +211,7 @@ func (w *Writer) CreatePart(
 
 	if w.firstPart == false {
 		w.SetType(mediaType)
-		w.rootMediaType = w.mediaType
+		//w.rootMediaType = w.mediaType
 		w.firstPart = true
 	}
 	return w.w.CreatePart(header)
